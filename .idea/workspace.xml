@@ -4,6 +4,7 @@
     <list default="true" id="3093a99e-f6a8-494c-9d7f-9e4b885192dc" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/_config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_posts/2019-09-08-spacemacs-workflow.md" beforeDir="false" afterPath="$PROJECT_DIR$/_posts/2019-09-08-快速创建博客.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,8 +35,8 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/img" />
+      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -64,7 +65,7 @@
       <workItem from="1571905012817" duration="1630000" />
       <workItem from="1571912975326" duration="810000" />
       <workItem from="1571965521163" duration="871000" />
-      <workItem from="1571968147076" duration="583000" />
+      <workItem from="1571968147076" duration="1901000" />
     </task>
     <servers />
   </component>
