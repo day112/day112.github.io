@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3093a99e-f6a8-494c-9d7f-9e4b885192dc" name="Default Changelist" comment="" />
+    <list default="true" id="3093a99e-f6a8-494c-9d7f-9e4b885192dc" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/_posts/2019-10-25-php73新增扩展imagick.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,11 +29,12 @@
   <component name="ProjectId" id="1Sdffc6t9j21ZLmt1J3bEfpbcAA" />
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/img" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/_posts" />
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/_posts" />
       <recent name="$PROJECT_DIR$/img" />
       <recent name="$PROJECT_DIR$" />
     </key>
@@ -61,7 +65,8 @@
       <workItem from="1571905012817" duration="1630000" />
       <workItem from="1571912975326" duration="810000" />
       <workItem from="1571965521163" duration="871000" />
-      <workItem from="1571968147076" duration="2474000" />
+      <workItem from="1571968147076" duration="2778000" />
+      <workItem from="1571991155510" duration="830000" />
     </task>
     <servers />
   </component>
