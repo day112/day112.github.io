@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3093a99e-f6a8-494c-9d7f-9e4b885192dc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/_posts/2019-10-28-MacOS PHP 开发环境配置.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_posts/2019-10-28-LNMP环境一键部署.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/img/lnmp配置.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,14 +30,14 @@
   <component name="ProjectId" id="1Sdffc6t9j21ZLmt1J3bEfpbcAA" />
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/_posts" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/img" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/_posts" />
       <recent name="$PROJECT_DIR$/img" />
+      <recent name="$PROJECT_DIR$/_posts" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -68,7 +69,7 @@
       <workItem from="1571965521163" duration="871000" />
       <workItem from="1571968147076" duration="2778000" />
       <workItem from="1571991155510" duration="1004000" />
-      <workItem from="1572224566752" duration="1843000" />
+      <workItem from="1572224566752" duration="3805000" />
     </task>
     <servers />
   </component>
