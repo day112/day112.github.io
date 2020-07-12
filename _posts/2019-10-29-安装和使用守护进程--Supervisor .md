@@ -79,7 +79,7 @@ stdout_logfile=/home/wwwroot/www.guaosi.com/storage/logs/horizon.log ; 阻塞进
 
 新建文件 `supervisord.service`
 
-#supervisord.service
+supervisord.service
 
 [Unit] 
 Description=Supervisor daemon

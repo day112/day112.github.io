@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>日记</title>
+    <description>php | laravel | Go</description>
+    <link>http://localhost:4000/</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Tue, 29 Oct 2019 12:44:48 +0800</pubDate>
+    <lastBuildDate>Tue, 29 Oct 2019 12:44:48 +0800</lastBuildDate>
+    <generator>Jekyll v4.0.0</generator>
+    
+      <item>
+        <title>安装和使用守护进程--Supervisor</title>
+        <description>&lt;h2 id=&quot;安装和使用守护进程supervisor&quot;&gt;安装和使用守护进程–Supervisor&lt;/h2&gt;
+
+&lt;h3 id=&quot;起因&quot;&gt;起因&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;** 在Linux上有时候需要开启一个阻塞进程来监听操作。当ssh连上服务器，直接运行一个阻塞进程，然后退出服务器时，这个阻塞进程也会跟着关闭。**&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;解决办法&quot;&gt;解决办法&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;使用python开发的Supervisor守护进程。它可以很方便的监听、启动、停止、重启一个或多个进程。用Supervisor管理的进程，当一个进程意外被杀死，supervisort监听到进程死后，会自动将它重新拉起，很方便的做到进程自动恢复的功能，不再需要自己写shell脚本来控制。&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;安装配置supervisor&quot;&gt;安装配置Supervisor&lt;/h3&gt;
+
+&lt;h4 id=&quot;centos安装&quot;&gt;Centos安装&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;yum install epel-release&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;yum install -y supervisor&lt;/code&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;ubuntu&quot;&gt;Ubuntu&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;apt-get install supervisor&lt;/code&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;配置&quot;&gt;配置&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;在/etc/supervisor/目录下有个conf.d的文件夹和supervisord.conf配置文件。打开配置文件&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;vim supervisord.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;我们可以看到&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;[include]
+files = /etc/supervisor/conf.d/*.conf&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;意思是Supervisor在启动的时候会加载conf.d目录下所有的conf配置文件。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;horizon守护进程配置参考&quot;&gt;horizon守护进程配置参考&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;laravel的horizon守护进程配置&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cd /etc/supervisor/conf.d/&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;vim horizon.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;填入以下内容&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;[program:horizon]
+process_name=%(program_name)s
+command=php /home/wwwroot/www.guaosi.com/artisan horizon ; 阻塞进程执行的命令
+autostart=true ; 阻塞进程是否跟着Supervisor一起开机自动
+autorestart=true ; 阻塞进程被异常退出是否自动重启
+user=www ; 由哪个用户执行阻塞进程的命令
+redirect_stderr=true
+stdout_logfile=/home/wwwroot/www.guaosi.com/storage/logs/horizon.log ; 阻塞进程打印到控制台的内容写到哪里&lt;/p&gt;
+
+&lt;h3 id=&quot;启动服务&quot;&gt;启动服务&lt;/h3&gt;
+
+&lt;h4 id=&quot;centos启动&quot;&gt;Centos启动&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;systemctl start supervisord&lt;/code&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;ubuntu启动&quot;&gt;Ubuntu启动&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;supervisord -c /etc/supervisor/supervisord.conf&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;开机自启&quot;&gt;开机自启&lt;/h3&gt;
+
+&lt;h4 id=&quot;centos开机自启&quot;&gt;Centos开机自启&lt;/h4&gt;
+
+&lt;p&gt;新建文件 &lt;code class=&quot;highlighter-rouge&quot;&gt;supervisord.service&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;supervisord.service&lt;/p&gt;
+
+&lt;p&gt;[Unit] 
+Description=Supervisor daemon&lt;/p&gt;
+
+&lt;p&gt;[Service] 
+Type=forking 
+ExecStart=/usr/bin/supervisord -c /etc/supervisord.conf 
+ExecStop=/usr/bin/supervisorctl shutdown 
+ExecReload=/usr/bin/supervisorctl reload 
+KillMode=process 
+Restart=on-failure 
+RestartSec=42s&lt;/p&gt;
+
+&lt;p&gt;[Install] 
+WantedBy=multi-user.target&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;将文件拷贝到/usr/lib/systemd/system/&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cp supervisord.service /usr/lib/systemd/system/&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;启动服务&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;systemctl enable supervisord&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;验证一下是否为开机启动&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;systemctl is-enabled supervisord&lt;/code&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;ubuntu开机自启&quot;&gt;Ubuntu开机自启&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;编辑/etc/rc.local文件&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;vi /etc/rc.local&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;在exit 0之前加入以下命令&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/local/bin/supervisord&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;保存并退出
+最后修改rc.local权限&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;chmod +x /etc/rc.local&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;常用命令&quot;&gt;常用命令&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;重新启动配置中的所有程序&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;supervisorctl reload&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;启动某个进程(program_name=你配置中写的程序名称)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;supervisorctl start program_name&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;查看正在守候的进程&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;supervisorctl&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;停止某一进程 (program_name=你配置中写的程序名称)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;supervisorctl stop program_name&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;重启某一进程 (program_name=你配置中写的程序名称)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;supervisorctl restart program_name&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;停止全部进程&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;supervisorctl stop all&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;注意：显示用stop停止掉的进程，用reload或者update都不会自动重启。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;注意&quot;&gt;注意&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;被Supervisor守护的进程都是常驻内存的，即如果修改了被守护的进程的源码，需要重启对这个进程的守护才能生效，否则还是未修改前的。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;supervisorctl restart program_name&lt;/code&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Tue, 29 Oct 2019 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2019/10/29/%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B-Supervisor/</link>
+        <guid isPermaLink="true">http://localhost:4000/2019/10/29/%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B-Supervisor/</guid>
+        
+        <category>Supervisor</category>
+        
+        <category>博客</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>MacOS PHP 开发环境配置</title>
+        <description>&lt;h2 id=&quot;macos-php-开发环境配置&quot;&gt;MacOS PHP 开发环境配置&lt;/h2&gt;
+
+&lt;h3 id=&quot;安装-homebrew&quot;&gt;安装 Homebrew&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew doctor&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;确保 brew 运行正常&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;配置-brew-源&quot;&gt;配置 brew 源&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt; cd &quot;$(brew --repo)&quot; &amp;amp;&amp;amp; git remote set-url origin https://git.coding.net/homebrew/homebrew.git&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cd $home &amp;amp;&amp;amp; brew update&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;使用-homebrew-cask-安装软件&quot;&gt;使用 Homebrew Cask 安装软件&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew cask install phpstorm&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew cask install visual-studio-code&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew cask install sublime-text&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew cask install sourcetree&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew cask install filezilla&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew cask install sequel-pro&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew cask install TablePlus&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew cask install dingtalk&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew cask install sogouinput&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;开发环境&quot;&gt;开发环境&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;个人喜欢 Valet&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew install php&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew install mysql@5.7&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew install nginx&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew install dnsmasq&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew install composer&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew install redis&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;安装 laravel&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;composer global require &quot;laravel/installer&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;composer global require laravel/valet &lt;/code&gt; &lt;strong&gt;#确保 ~/.composer/vendor/bin 目录位于系统的「PATH」中&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;如果报错执行下面的命令&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;export PATH=&quot;$PATH:$HOME/.composer/vendor/bin&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;valet install&lt;/code&gt; &lt;strong&gt;运行 valet install 命令来配置和安装 Valet 和 DnsMasq，并注册 Valet 后台随机启动。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;iterm2-配置&quot;&gt;iterm2 配置&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew install iterm2&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;检查终端默认 shell 期待 /bin/zsh&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;echo $SHELL&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;安装-oh-my-zsh&quot;&gt;安装 oh-my-zsh&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;sh -c &quot;$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;如果要使用什么插件，需要在 ~/.zshrc 文件中进行添加&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;subl ~/.zshrc&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;安装字体&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/powerline/fonts.git --depth=1&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cd fonts&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;./install.sh&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cd ..&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;rm -rf fonts&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;在 .zshrc 修改代码&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ZSH_THEME=&quot;agnoster&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;隐藏前面的主机名，在 .zshrc 下面添加下面的代码&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;prompt_context () { }&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;隐藏前面的用户名在 .zshrc 下面添加下面的代码&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;DEFAULT_USER=&quot;username&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;隐藏第一行&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;touch ~/.hushlogin&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;rm ~/.hushlogin&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;插件安装&quot;&gt;插件安装&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;zsh-autosuggestions 自动补全&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;zsh-syntax-highlighting 语法高亮&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;plugins=(zsh-autosuggestions zsh-syntax-highlighting)&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;source ~/.zshrc&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;生成密钥&quot;&gt;生成密钥&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ssh-keygen&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cat ~/.ssh/id_rsa.pub&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://learnku.com/articles/18913&quot; target=&quot;_blank&quot;&gt;开发环境配置&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 28 Oct 2019 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2019/10/28/MacOS-PHP-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</link>
+        <guid isPermaLink="true">http://localhost:4000/2019/10/28/MacOS-PHP-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</guid>
+        
+        <category>Mac</category>
+        
+        <category>博客</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>LNMP环境一键部署</title>
+        <description>&lt;h2 id=&quot;lnmp环境一键部署&quot;&gt;LNMP环境一键部署&lt;/h2&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;wget -c http://mirrors.linuxeye.com/oneinstack-full.tar.gz &amp;amp;&amp;amp; tar xzf oneinstack-full.tar.gz &amp;amp;&amp;amp; ./oneinstack/install.sh --nginx_option 1 --php_option 8 --phpcache_option 1 --php_extensions sourceguardian,imagick,fileinfo,imap,redis,memcached,memcache,mongodb,swoole --db_option 2 --dbinstallmethod 1 --dbrootpwd oneinstack --redis  --memcached  --iptables  --ssh_port 22 --reboot &lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://oneinstack.com/auto/&quot; target=&quot;_blank&quot;&gt;oneinstack一键安装&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;端口开放&quot;&gt;端口开放&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;执行下 netstat -tnlp&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;执行下sudo ufw status&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;打开iptables 3306端口&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;如果您的操作系统为CentOS系列：&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 3306 -j ACCEPT  &lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;service iptables save&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;数据库授权&quot;&gt;数据库授权&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;注意⚠️：远程连接新建一个帐号（帐号名不能为root）&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;如：添加一个用户名为db_user，密码为db_pass，授权为% （%表示所有IP能连接）对db_name数据库所有权限，命令如下：&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;MySQL8.0版本&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;mysql -uroot -p&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;create user db_user@'%' identified by 'password'; #创建用户&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;grant all privileges on db_name.* to db_user@'%' with grant option; #授权&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;exit; #退出数据库控制台，特别注意有分号&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;其余MySQL版本&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;mysql -uroot -p&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;grant all privileges on db_name.* to db_user@'%' with grant option; #授权&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;flush privileges;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;exit; #退出数据库控制台，特别注意有分号&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;操作系统命令&quot;&gt;操作系统命令&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;shutdown -r now       #计算机会立刻重启&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;shutdown -r +10       #计算机会将于10分钟后重启&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;reboot                #重启&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;halt                  #关机&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;秘钥：ssh-keygen&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;centos7安装zsh配置oh-my-zsh&quot;&gt;centos7安装zsh配置oh-my-zsh&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;echo $SHELL&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;返回结果:&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;bin/bash&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;安装zsh&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;yum install -y zsh&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;设置默认shell&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;chsh -s /bin/zsh&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;安装oh-my-zsh（自动）&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;sh -c &quot;$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;修改主题: agnoster&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;完成后，重启生效默认shell    reboot&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;下载composerphar&quot;&gt;下载composer.phar&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;curl -sS https://getcomposer.org/installer | php&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;mv composer.phar /usr/local/bin/composer&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;centos-安装-nodejs&quot;&gt;CentOS 安装 node.js&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;从EPEL库安装Node.js&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;安装Node.js的一个有效且简单的方法就是从官方库下载安装，首先确保您可以访问到EPEL库，您可以通过运行以下命令来安装&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;sudo yum install epel-release&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;sudo yum install nodejs&lt;/code&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 28 Oct 2019 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2019/10/28/LNMP%E7%8E%AF%E5%A2%83%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2/</link>
+        <guid isPermaLink="true">http://localhost:4000/2019/10/28/LNMP%E7%8E%AF%E5%A2%83%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2/</guid>
+        
+        <category>LNMP</category>
+        
+        <category>博客</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>PHP73新增扩展</title>
+        <description>&lt;h2 id=&quot;mac-环境-php73新增扩展&quot;&gt;Mac 环境 PHP73新增扩展&lt;/h2&gt;
+
+&lt;h3 id=&quot;安装流程&quot;&gt;安装流程&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew install imagemagick&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;pecl install imagick  安装成功会在php.ini文件中新增 extension=imagick.so&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;查找php.ini 文件路径命令： &lt;code class=&quot;highlighter-rouge&quot;&gt;php --ini&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;php -m 查看扩展&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;laravel 项目中测试  &lt;code class=&quot;highlighter-rouge&quot;&gt;dd(phpinfo())&lt;/code&gt; 查看扩展，没有找到 imagick；&lt;/p&gt;
+
+&lt;p&gt;如果是laravel环境 需要重启 &lt;code class=&quot;highlighter-rouge&quot;&gt;valet restart&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;👌&lt;/p&gt;
+
+</description>
+        <pubDate>Fri, 25 Oct 2019 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2019/10/25/php73%E6%96%B0%E5%A2%9E%E6%89%A9%E5%B1%95imagick/</link>
+        <guid isPermaLink="true">http://localhost:4000/2019/10/25/php73%E6%96%B0%E5%A2%9E%E6%89%A9%E5%B1%95imagick/</guid>
+        
+        <category>PHP</category>
+        
+        <category>博客</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>快速创建博客</title>
+        <description>&lt;h2 id=&quot;mac-环境-使用jekyll-快速创建博客&quot;&gt;Mac 环境 使用jekyll 快速创建博客&lt;/h2&gt;
+
+&lt;h3 id=&quot;安装ruby环境&quot;&gt;安装ruby环境&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;brew install ruby&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gem  install jekyll&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;创建git仓库&quot;&gt;创建Git仓库&lt;/h3&gt;
+&lt;p&gt;创建仓库名称： &lt;code class=&quot;highlighter-rouge&quot;&gt;username.github.io&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;克隆博客模板到本地 &lt;code class=&quot;highlighter-rouge&quot;&gt;git@github.com:Huxpro/huxpro.github.io.git&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;修改&lt;code class=&quot;highlighter-rouge&quot;&gt;_config.yml&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;上传到git仓库&lt;/p&gt;
+
+&lt;p&gt;访问&lt;code class=&quot;highlighter-rouge&quot;&gt;username.github.io&lt;/code&gt;访问成功&lt;/p&gt;
+</description>
+        <pubDate>Sun, 08 Sep 2019 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2019/09/08/%E5%BF%AB%E9%80%9F%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2/</link>
+        <guid isPermaLink="true">http://localhost:4000/2019/09/08/%E5%BF%AB%E9%80%9F%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2/</guid>
+        
+        <category>日记</category>
+        
+        <category>博客</category>
+        
+        
+      </item>
+    
+  </channel>
+</rss>

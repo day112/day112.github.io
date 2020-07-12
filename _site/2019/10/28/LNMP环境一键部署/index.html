@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="php | laravel | Go">
+    <meta name="keywords"  content="">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="LNMP环境一键部署 - 日记 | liu kai">
+    
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="LNMP环境一键部署
+">
+    
+    <meta property="article:published_time" content="2019-10-28T00:00:00Z">
+    
+    
+    <meta property="article:author" content="liu kai">
+    
+    
+    <meta property="article:tag" content="LNMP">
+    
+    <meta property="article:tag" content="博客">
+    
+    
+    <meta property="og:image" content="http://localhost:4000/img/avatars.png">
+    <meta property="og:url" content="http://localhost:4000/2019/10/28/LNMP%E7%8E%AF%E5%A2%83%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2/">
+    <meta property="og:site_name" content="日记 | liu kai">
+    
+    <title>LNMP环境一键部署 - 日记 | liu kai</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="http://localhost:4000/2019/10/28/LNMP%E7%8E%AF%E5%A2%83%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top invert">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">日记</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/home-bg.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+
+
+
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/home-bg.jpg');
+        background: ;
+    }
+
+    
+</style>
+
+<header class="intro-header style-text" >
+
+    <div class="header-mask"></div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/archive/?tag=LNMP" title="LNMP">LNMP</a>
+                        
+                        <a class="tag" href="/archive/?tag=%E5%8D%9A%E5%AE%A2" title="博客">博客</a>
+                        
+                    </div>
+                    <h1>LNMP环境一键部署</h1>
+                    
+                    <h2 class="subheading">LNMP环境一键部署</h2>
+                    <span class="meta">Posted by liu kai on October 28, 2019</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <!-- Multi-Lingual -->
+                
+
+				<h2 id="lnmp环境一键部署">LNMP环境一键部署</h2>
+
+<p><code class="highlighter-rouge">wget -c http://mirrors.linuxeye.com/oneinstack-full.tar.gz &amp;&amp; tar xzf oneinstack-full.tar.gz &amp;&amp; ./oneinstack/install.sh --nginx_option 1 --php_option 8 --phpcache_option 1 --php_extensions sourceguardian,imagick,fileinfo,imap,redis,memcached,memcache,mongodb,swoole --db_option 2 --dbinstallmethod 1 --dbrootpwd oneinstack --redis  --memcached  --iptables  --ssh_port 22 --reboot </code></p>
+
+<p><a href="https://oneinstack.com/auto/" target="_blank">oneinstack一键安装</a></p>
+
+<h3 id="端口开放">端口开放</h3>
+
+<p><code class="highlighter-rouge">执行下 netstat -tnlp</code></p>
+
+<p><code class="highlighter-rouge">执行下sudo ufw status</code></p>
+
+<p><strong>打开iptables 3306端口</strong></p>
+
+<p><em>如果您的操作系统为CentOS系列：</em></p>
+
+<p><code class="highlighter-rouge">iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 3306 -j ACCEPT  </code></p>
+
+<p><code class="highlighter-rouge">service iptables save</code></p>
+
+<h3 id="数据库授权">数据库授权</h3>
+
+<p><em>注意⚠️：远程连接新建一个帐号（帐号名不能为root）</em></p>
+
+<p><em>如：添加一个用户名为db_user，密码为db_pass，授权为% （%表示所有IP能连接）对db_name数据库所有权限，命令如下：</em></p>
+
+<p><strong>MySQL8.0版本</strong></p>
+
+<p><code class="highlighter-rouge">mysql -uroot -p</code></p>
+
+<p><code class="highlighter-rouge">create user db_user@'%' identified by 'password'; #创建用户</code></p>
+
+<p><code class="highlighter-rouge">grant all privileges on db_name.* to db_user@'%' with grant option; #授权</code></p>
+
+<p><code class="highlighter-rouge">exit; #退出数据库控制台，特别注意有分号</code></p>
+
+<p><strong>其余MySQL版本</strong></p>
+
+<p><code class="highlighter-rouge">mysql -uroot -p</code></p>
+
+<p><code class="highlighter-rouge">grant all privileges on db_name.* to db_user@'%' with grant option; #授权</code></p>
+
+<p><code class="highlighter-rouge">flush privileges;</code></p>
+
+<p><code class="highlighter-rouge">exit; #退出数据库控制台，特别注意有分号</code></p>
+
+<h3 id="操作系统命令">操作系统命令</h3>
+
+<p><code class="highlighter-rouge">shutdown -r now       #计算机会立刻重启</code></p>
+
+<p><code class="highlighter-rouge">shutdown -r +10       #计算机会将于10分钟后重启</code></p>
+
+<p><code class="highlighter-rouge">reboot                #重启</code></p>
+
+<p><code class="highlighter-rouge">halt                  #关机</code></p>
+
+<p><code class="highlighter-rouge">秘钥：ssh-keygen</code></p>
+
+<h3 id="centos7安装zsh配置oh-my-zsh">centos7安装zsh配置oh-my-zsh</h3>
+
+<p><code class="highlighter-rouge">echo $SHELL</code></p>
+
+<p><em>返回结果:</em></p>
+
+<p><code class="highlighter-rouge">bin/bash</code></p>
+
+<p><strong>安装zsh</strong></p>
+
+<p><code class="highlighter-rouge">yum install -y zsh</code></p>
+
+<p><strong>设置默认shell</strong></p>
+
+<p><code class="highlighter-rouge">chsh -s /bin/zsh</code></p>
+
+<p><strong>安装oh-my-zsh（自动）</strong></p>
+
+<p><code class="highlighter-rouge">sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"</code></p>
+
+<p><code class="highlighter-rouge">修改主题: agnoster</code></p>
+
+<p><code class="highlighter-rouge">完成后，重启生效默认shell    reboot</code></p>
+
+<h3 id="下载composerphar">下载composer.phar</h3>
+
+<p><code class="highlighter-rouge">curl -sS https://getcomposer.org/installer | php</code></p>
+
+<p><code class="highlighter-rouge">mv composer.phar /usr/local/bin/composer</code></p>
+
+<h3 id="centos-安装-nodejs">CentOS 安装 node.js</h3>
+
+<p><strong>从EPEL库安装Node.js</strong></p>
+
+<p><em>安装Node.js的一个有效且简单的方法就是从官方库下载安装，首先确保您可以访问到EPEL库，您可以通过运行以下命令来安装</em></p>
+
+<p><code class="highlighter-rouge">sudo yum install epel-release</code></p>
+
+<p><code class="highlighter-rouge">sudo yum install nodejs</code></p>
+
+
+
+                <hr style="visibility: hidden;">
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2019/10/25/php73%E6%96%B0%E5%A2%9E%E6%89%A9%E5%B1%95imagick/" data-toggle="tooltip" data-placement="top" title="PHP73新增扩展">
+                        Previous<br>
+                        <span>PHP73新增扩展</span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2019/10/28/MacOS-PHP-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" data-toggle="tooltip" data-placement="top" title="MacOS PHP 开发环境配置">
+                        Next<br>
+                        <span>MacOS PHP 开发环境配置</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <hr style="visibility: hidden;">
+
+                
+
+                
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+        <hr class="hidden-sm hidden-xs">
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        </a>
+        
+        
+                <a data-sort="0000" 
+                    href="/archive/?tag=%E5%8D%9A%E5%AE%A2"
+                    title="博客"
+                    rel="5">博客
+    </div>
+</section>
+
+
+                <!-- Friends Blog -->
+                
+<hr>
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+  
+</ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- add support for mathjax by voleking-->
+
+
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'right',
+          // icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  
+  
+  
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright &copy; 日记 2019
+                    <br>
+                    Powered by <a href="http://zangpei.top">liu kai</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=day112&repo=day112.github.io&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js "></script>
+<script src="/js/sw-registration.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+<!-- Side Catalog -->
+
+
+
+<!-- Multi-Lingual -->
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
